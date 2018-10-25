@@ -33,6 +33,10 @@ Code them as a vector
   Size of vector depends on how long email is
 
 
+## EOS vs SOS
+we feed in values of hello, the email words feed into the system through time.
 
+memory cell, then we get new inputs and new outputs
+then 
 
 
