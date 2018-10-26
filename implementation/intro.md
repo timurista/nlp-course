@@ -21,3 +21,9 @@ go to download and install latest version
 ~$ conda activate chatbot
 (chatbot) ~$ pip install tensorflow=1.0.0
 ```
+
+## Debugging issues
+run the commands
+`pip install numpy --upgrade`
+inside the spyder terminal.
+
