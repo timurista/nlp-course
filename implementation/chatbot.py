@@ -66,5 +66,81 @@ clean_answers = []
 for a in answers:
     clean_answers.append(clean_text(a))
 
+
+## Remove non frequent words
+word2count = {}
+for q in clean_questions:
+    for word in q.split():
+        w = word.strip()
+        if w not in word2count:
+            word2count[w] = 1
+        else:
+            word2count[w]+= 1
+
+for a in clean_answers:
+    for word in a.split():
+        w = word.strip()
+        if w not in word2count:
+            word2count[w] = 1
+        else:
+            word2count[w]+= 1
+
+## remove words not at threshold
+threshold = 20
+questionswords2int = {}
+word_number = 0
+
+for word, count in word2count.items():
+    if count >= threshold:
+        questionswords2int[word] = word_number
+        word_number += 1
+
+answerswords2int = {}
+word_number = 0
+for word, count in word2count.items():
+    if count >= threshold:
+        answerswords2int[word] = word_number
+        word_number += 1        
+        
+## tokens for seq2seq
+tokens = ['<PAD>', '<EOS>', '<OUT>', '<SOS>']
+# adding +1 since we need unique number, and numbers go from 0 to len of words
+# so we just use length of words dict here
+for token in tokens:
+    questionswords2int[token] = len(questionswords2int) + 1
+
+for token in tokens:
+    answerswords2int[token] = len(answerswords2int) + 1
+
+## Create inversity dictionary of answerswords2int dictionary
+answersint2word = { w_i: w for w, w_i in answerswords2int.items() }
+
+for i in range(len(clean_answers)):
+    clean_answers[i] += " <EOS>"
+
+## Translating
+questions_to_int = []
+for question in clean_questions:
+    ints = []
+    for w in question.split():
+        if w not in questionswords2int:
+            ints.append(questionswords2int['<OUT>'])
+        else:
+            ints.append(questionswords2int[w])
     
+    questions_to_int.append(ints)
+
+    
+answers_to_int = []
+for answer in clean_answers:
+    ints = []
+    for w in answer.split():
+        if w not in answerswords2int:
+            ints.append(answerswords2int['<OUT>'])
+        else:
+            ints.append(answerswords2int[w])
+    
+    answers_to_int.append(ints)
+
+
              
