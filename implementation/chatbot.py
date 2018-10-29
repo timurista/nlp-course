@@ -154,4 +154,43 @@ for length in range(1, 26):
             sorted_clean_questions.append(questions_to_int[i[0]])
             sorted_clean_answers.append(answers_to_int[i[0]])
             
+
+## Part 2 Seq2Seq Model
+
+def model_inputs():
+    # input for tesnorflow input
+    # sorted clean questions are integers
+    # 2d matrix
+    inputs = tf.placeholder(tf.int32, [None, None], name = 'input')    
+
+    # target
+    targets = tf.placeholder(tf.int32, [None, None], name = 'target')    
+    
+    # learning rate and param for dropout, how many nuerons
+    # you deactive
+    lr = tf.placeholder(tf.float32, name = 'learnin_rate')    
+
+    # controls dropout rate
+    keep_prob = tf.placeholder(tf.float32, name = 'keep_prob')    
+
+    return inputs, targets, lr, keep_prob
+
+## Preprocessing the targets
+## need to feed nueral network with answers in batches
+## batches of size say 10
+## need to put the SOS token at beginning f each answer in sorted_clean_answers
+
+def preprocess_targets(targets, word2int, batch_size):
+    left_side = tf.fill([batch_size, 1], word2int['<SOS>'])
+    ## -1 gets all columns but the last size
+    ## how many do we want to slice by?
+    ## we want them all, so do slice [1,1]
+    right_side = tf.strided_slice(targets, [0,0], [batch_size, -1], [1,1])
+    
+    # horizontal access is 1
+    preprocesssed_targets = tf.concat([left_side, right_side], 1)
+    return preprocesssed_targets
+
+## Encoding layer
+    
             
