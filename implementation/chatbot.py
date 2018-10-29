@@ -191,6 +191,35 @@ def preprocess_targets(targets, word2int, batch_size):
     preprocesssed_targets = tf.concat([left_side, right_side], 1)
     return preprocesssed_targets
 
-## Encoding layer
+## Encoding layer RNN
+## LSTM
+def encoder_rnn_layer(rnn_inputs, 
+                      rnn_size, 
+                      num_layers, 
+                      keep_prob,
+                      # length questions in each batch
+                      sequence_length):
+    
+    lstm = tf.contrib.rnn.BasicLSTMCell(rnn_size);
+    # apply dropout iva keep_prob
+    lstm_dropout = tf.contrib.rnn.DropoutWrapper(lstm, 
+                                                 input_keep_prob = keep_prob)
+    
+    # encoder step
+    encoder_cell = tf.contrib.rnn.MultiRNNCell([lstm_dropout] * num_layers)
+    
+    # bidirectional takes input
+    # built forward and backward rnn
+    # input size of forward and backward cell matches
+    # both directions on same
+    _, encoder_state = tf.nn.bidirectional_dynamic_rnn(cell_fw = encoder_cell,
+                                                       cell_bw = encoder_cell,
+                                                       sequence_length = sequence_length,
+                                                       inputs = rnn_inputs,
+                                                       dtype = tf.float32)
+    return encoder_state
+
+
+
     
             
