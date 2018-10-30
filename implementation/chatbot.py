@@ -219,7 +219,54 @@ def encoder_rnn_layer(rnn_inputs,
                                                        dtype = tf.float32)
     return encoder_state
 
-
-
+## Decoder RNR layer
+# takes encoder state we got from the encoder rnn layer
+def decode_training_set(encoder_state,
+                        decoder_cell,
+                        decoder_embedded_input,
+                        sequence_length,
+                        ## variable scope
+                        ## advanced data structure to wrap
+                        decoder_scope,
+                        output_function,
+                        keep_prob,
+                        batch_size
+                        ):
+    # number of lines or cols
+    # number of elements in 3
+    attention_states = tf.zeros([batch_size, 1, decoder_cell.output_size])
+    ## seq2seq prepare attention
     
-            
+    ## attention keys to be compared with attention state
+    ## attention values
+    ## attention score, similarity between keys
+    ## training decoder function
+    attention_keys, attention_values, attention_score_function, attention_construct_function = tf.contrib.seq2seq.prepare_attention(attention_states, 
+                                                                                                                                    attention_option= 'bahdanau',
+                                                                                                                                    num_units = decoder_cell.output_size)
+
+    ## attentional for future decoder
+    training_decoder_function = tf.contrib.seq2seq.attention_decoder_fn_train(encoder_state[0],
+                                                                              attention_keys,
+                                                                              attention_values,
+                                                                              attention_score_function,
+                                                                              attention_construct_function,
+                                                                              name = "attn_dec_train")
+    ## returns 3 elements
+    ## it returns decoder output
+    ## decoder_final_state
+    ## decoder_final_context_state
+    decoder_output, _, _ = tf.contrib.seq2seq.dynamic_rnn_decoder(decoder_cell,
+                                                                  training_decoder_function,
+                                                                  decoder_embedded_input,
+                                                                  sequence_length,
+                                                                  scope = decoder_scope)
+    ## output to apply dropout
+    ## and dropout rate
+    decoder_output_dropout = tf.nn.dropout(decoder_output, keep_prob)
+    
+    ## this then calls output function and returns results
+    return output_function(decoder_output_dropout)
+
+
+        
