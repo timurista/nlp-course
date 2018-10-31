@@ -269,4 +269,55 @@ def decode_training_set(encoder_state,
     return output_function(decoder_output_dropout)
 
 
+## Decoding the test/validation set
+# new stuff not used for training
+## TESTING PART / Validation
+# Keep 10% of training data for improving accuracy
+# we use inference function, deduce logically answers to questions it asked
+
+def decode_test_set(encoder_state,
+                    decoder_cell,
+                    decoder_embeddings_matrix,
+                    ## 4 new args
+                    sos_id,
+                    eos_id,
+                    maximum_length,
+                    num_words, # total number words
+                    sequence_length,
+                    decoder_scope,
+                    output_function,
+                    keep_prob,
+                    batch_size,                        
+                    ):
+
+    attention_states = tf.zeros([batch_size, 1, decoder_cell.output_size])
+
+    ## wont be back 
+    attention_keys, attention_values, attention_score_function, attention_construct_function = tf.contrib.seq2seq.prepare_attention(attention_states, 
+                                                                                                                                    attention_option= 'bahdanau',
+                                                                                                                                    num_units = decoder_cell.output_size)
+
+    ## attentional for future decoder
+    test_decoder_function = tf.contrib.seq2seq.attention_decoder_fn_inference(output_function,
+                                                                              encoder_state[0],
+                                                                              attention_keys,
+                                                                              attention_values,
+                                                                              attention_score_function,
+                                                                              attention_construct_function,
+                                                                              decoder_embeddings_matrix,
+                                                                              sos_id,
+                                                                              eos_id,
+                                                                              maximum_length,
+                                                                              num_words,
+                                                                              # namescope is mode of attentions fn
+                                                                              name = "attn_dec_inf")
+    ## returns 3 elements
+    test_predictions, _, _ = tf.contrib.seq2seq.dynamic_rnn_decoder(decoder_cell,
+                                                                    test_decoder_function,
+                                                                    scope = decoder_scope)
+
+    ## this then calls output function and returns results
+    return test_predictions
+
+
         
