@@ -420,4 +420,30 @@ def seq2seq_model(inputs,
     
     return training_predictions, test_predictions
     
+
+    
+################## PART 3 - TRAINING THE SEQ2SEQ MODEL ##################
+
+## Hypoer params, epoch is whole process of forward propogation, then
+## backpropogating loss and updating weights, one whole iteration of training
+epochs = 100
+batch_size = 64    
+rnn_size = 512
+num_layers = 3
+encoding_embedding_size = 512 #512 cols in embedding matrix
+decoding_embedding_size = 512
+learning_rate = 0.01 # can't be too high, or too low
+learning_rate_decay = 0.9 # percentage it is decayed so it learns in more depth    
+min_learning_rate = 0.0001
+keep_probability = 0.5
+
+## Defining session
+# when you open in gneeral you have to reset graph
+tf.reset_default_graph()
+session = tf.InteractiveSession()
+
+## loading models
+inputs, targets, lr, keep_prob = model_inputs()
+
+
     
