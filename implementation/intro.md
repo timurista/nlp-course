@@ -19,7 +19,7 @@ go to download and install latest version
 
 ```sh
 ~$ conda activate chatbot
-(chatbot) ~$ pip install tensorflow=1.0.0
+(chatbot) ~$ pip install tensorflow==1.0.0
 ```
 
 ## Debugging issues
