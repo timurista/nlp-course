@@ -445,5 +445,52 @@ session = tf.InteractiveSession()
 ## loading models
 inputs, targets, lr, keep_prob = model_inputs()
 
+## set sequence length
+sequence_length = tf.placeholder_with_default(25, None, name = "sequence_length" )
+
+# getting the shape of the inputs tensor
+input_shape = tf.shape(inputs)
+
+# get the training and test predictions
+# we reverse dimensions of a tensor
+training_predictions, test_predictions = seq2seq_model(tf.reverse(inputs, [-1]),
+                                                       targets,
+                                                       keep_prob,
+                                                       batch_size,
+                                                       sequence_length,
+                                                       len(answerswords2int),
+                                                       len(questionswords2int),
+                                                       encoding_embedding_size,
+                                                       decoding_embedding_size,
+                                                       rnn_size,
+                                                       num_layers,
+                                                       questionswords2int
+                                                       )
+
+## Setup Loss Error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
