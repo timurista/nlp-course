@@ -469,8 +469,22 @@ training_predictions, test_predictions = seq2seq_model(tf.reverse(inputs, [-1]),
 
 ## Setup Loss Error
 
+# gradient clipping to avoid vanishing gradient
 
-
+# loss error is weighted entropy
+# atom optimizer for stochastic gradient descent
+with tf.name_scope("optimization"):
+    loss_error = tf.contrib.seq2seq.sequence_loss(training_predictions,
+                                                  targets,
+                                                  tf.ones([input_shape[0], sequence_length]))
+    # atom optimizer then clipping
+    # then apply gradient clipping to optimizer
+    optimizer = tf.train.AdamOptimizer(learning_rate)
+    # optimizer to compute gradient
+    gradients = optimizer.compute_gradients(loss_error)
+    clipped_gradients = [(tf.clip_by_value(grad_tensor, -5.0, 5.0), grad_variable) for grad_tensor, grad_variable in gradients if grad_tensor is not None ]
+    optimizer_gradient_clipping = optimizer.apply_gradients(clipped_gradients)
+    
 
 
 
