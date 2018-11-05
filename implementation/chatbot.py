@@ -598,10 +598,24 @@ for epoch in range(1, epochs + 1):
 
 print("Game Over")
 
+####### Part 4 - Loading seq2seq model
 
+checkpoint = "./chatbot_weights.ckpt"
+session = tf.InteractiveSession()
 
+session.run(tf.global_variables_initializer())
+saver = tf.train.Saver()
+saver.restore(session, checkpoint)
 
+## Convert questions from strings to lists of encoded ints
+def convert_string2int(question, word2int):
+    question = clean_text(question)
+    ## using get so out will be returned
+    return [word2int.get(word, word2int['<OUT>']) for word in question.split()]
 
-
-
+## setup the chat
+while(True):
+    question = input("You: ")
+    if question == 'exit' or question == 'Goodbye'
+        break
     
