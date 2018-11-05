@@ -37,4 +37,43 @@ Vanishing gradient problem, as we propogate error it goes through layers connect
 
 ### LSTM arch
 
-### LSTM walkthrough
+Vanishing gradient problem. It goes through temporal loop, layers connected to themselves. Connected by double recurrent. So weights on far left updated less than weights of the right.
+
+We could penalize the wrec on the right etc. But what is easiest solution?
+
+LSTM, we make the W_rec = 1. We just make the weighted to be 1. 
+
+`colah.github.io`
+
+LSTM in literature.
+
+vector transfer. We keep the same weights.
+
+`tanh` layer operation. -1/1
+
+sigmoid 0-1 in layers
+
+We have a memory pipeline as either fully augment output or just to transfer over. 
+
+Shi Yan 2016, understanding lstm and it's diagrams.
+`https://medium.com/mlreview/understanding-lstm-and-its-diagrams-37e2f46f1714`
+
+## LSTM Practical Intuition
+How do they work inside practical applications?
+
+`tanh` function review near ned. From Andrei blog. RNN_Effectiveness.
+http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+
+It idenfities how deeply inside a hidden state you are, in the memory cell it assigns them to keep track of certain things when it is important.
+
+`karpath.github.io` blog for rnn effectiveness
+
+## LSTM variations
+variation #1 you can add defaults, allows decisions about valves to be made.
+
+connecting forget and memory valve together. You combine.
+Whenever you close memory off, you HAVE to put something in. If you keep memory then you put thing in (-1)
+
+hiddent pipleine, you have 1 for hidden state and memory state. One pipeline that takes care of everything
+
+LSTM a search space odyssey and comparison.
