@@ -489,7 +489,7 @@ with tf.name_scope("optimization"):
 ## Padding seuences so question and answers same length
 def apply_padding(batch_of_sequences, word2int):
     max_sequence_length = max([ len(sequence) for sequence in batch_of_sequences ])
-    return [ sequence + [word2int['<PAD>']] * max_sequence_length - len(sequence) for sequence in batch_of_sequences]
+    return [ sequence + [word2int['<PAD>']] * (max_sequence_length - len(sequence)) for sequence in batch_of_sequences]
 
 
 ## make the batches of questions and answers
@@ -578,10 +578,25 @@ for epoch in range(1, epochs + 1):
             batch_time = ending_time - starting_time
             average_validation_loss_error = total_validation_loss_error // (len(validation_questions) // batch_size)
             print('Validation Loss Error: {:>6.3f}, Batch Validation Time: {:d} seconds'.format(average_validation_loss_error,batch_time))
-            
+            learning_rate *= learning_rate_decay
+            if learning_rate < min_learning_rate:
+                learning_rate = min_learning_rate
+            list_validation_loss_error.append(average_validation_loss_error)
+            if average_validation_loss_error < min(list_validation_loss_error):
+                print('I speak better now!!')
+                early_stepping_check = 0
+                saver = tf.train.Saver()
+                saver.save(session, checkpoint)
+            else:
+                print('Sorry I do not speak better, I need to practice more.')
+                early_stopping_check += 1
+                if early_stopping_check == early_stopping_stop:
+                    break
+    
+    if early_stopping_check == early_stopping_stop:
+        print('My appologies this is the best I can do.')
 
-
-
+print("Game Over")
 
 
 
