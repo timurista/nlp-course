@@ -618,5 +618,27 @@ while(True):
     question = input("You: ")
     if question == 'exit' or question == 'Goodbye'
         break
+    question = convert_string2int(question, questionswords2int)
+    question = question + [questionswords2int['<PAD>']] * (20 - len(question))
     
-    
+    ## nueral network is 20 questions
+    fake_batch = np.zeros((batch_size, 20))
+    fake_batch[0] = question
+    predicted_answer = session.run(test_predictions, { inputs: fake_batch, keep_prob: 0.5 })[0]    
+    answer = ''
+
+    # get token ids from predicted answer
+    for i in np.argmax(predicted_answer, 1):
+        if answersint2word[i] == 'i':            
+            token = 'I'
+        elif answersint2word[i] == '<EOS>':
+            token = '.'
+        elif answersint2word[i] == '<OUT>':
+            token = 'out'
+        else:
+            token = ' ' + answersint2word[i]
+        answer += token
+        if token == '.':
+            # chatbot is done talking
+            break
+    print("ChatBot: " + answer)
